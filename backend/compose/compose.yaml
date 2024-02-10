@@ -1,0 +1,224 @@
+version: '3.9'
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+
+networks:
+  default:
+    name: srgpt
+    driver: bridge
+
+services:
+  base:
+    env_file:
+      - ../app/config/.env
+  srgpt:
+    extends: base
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-srgpt
+    container_name: srgpt
+    build:
+      context: ./
+      dockerfile: ./src/srgpt/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-srgpt
+    deploy:
+      resources:
+        limits:
+          memory: 2Gi
+    restart: unless-stopped
+
+  # Postgres for databasey stuff
+  srgpt-postgres:
+    extends: base
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-srgpt-postgres
+    container_name: srgpt-postgres
+    build:
+      context: ./
+      dockerfile: ./src/srgpt-postgres/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-srgpt-postgres
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=srgpt
+      - POSTGRES_DB=srgpt
+      - POSTGRES_PASSWORD=srgpt
+    volumes:
+      - ./src/srgpt-postgres/update-scripts/99-srgpt_update.sql:/docker-entrypoint-initdb.d/99-srgpt_update.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d srgpt -U srgpt"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *logging
+
+  # Feature Flag service
+  feature-flag-service:
+    extends: base
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-feature-flag-service
+    container_name: feature-flag-service
+    build:
+      context: ./
+      dockerfile: ./src/feature-flag-service/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-feature-flag-service
+    deploy:
+      resources:
+        limits:
+          memory: 175M
+    restart: unless-stopped
+    ports:
+      - ${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}    # Feature Flag Service UI
+      - ${FEATURE_FLAG_GRPC_SERVICE_PORT}:${FEATURE_FLAG_GRPC_SERVICE_PORT} # Feature Flag Service gRPC API
+    environment:
+      - FEATURE_FLAG_GRPC_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=feature-flag-service
+      - DATABASE_URL=ecto://srgpt:srgpt@srgpt-postgres:5432/srgpt
+    healthcheck:
+      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
+    depends_on:
+      srgpt-postgres:
+        condition: service_healthy
+    logging: *logging
+
+  # Redis service used for Vector, Index, Doc, and ChatStore
+  redis-stack-svc:
+    extends: base
+    image: ${REDIS_IMAGE}
+    # use REDIS_ARGS for redis-stack-server instead of command arguments
+    environment:
+      - REDIS_ARGS=--save 1200 32
+    volumes:
+      - my-redis-data:/data
+
+  # ********************
+  # Telemetry Components
+  # ********************
+  # Adapted from https://github.com/open-telemetry/opentelemetry-demo/blob/main/docker-compose.yml
+  # Jaeger
+  jaeger:
+    extends: base
+    image: ${JAEGERTRACING_IMAGE}
+    container_name: jaeger
+    command:
+      - "--memory.max-traces=5000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    ports:
+      - ${JAEGER_SERVICE_PORT}:${JAEGER_SERVICE_PORT}         # Jaeger UI
+      - ${OTEL_COLLECTOR_PORT_GRPC}
+    environment:
+      - METRICS_STORAGE_TYPE=prometheus
+    logging: *logging
+
+  # Grafana
+  grafana:
+    extends: base
+    image: ${GRAFANA_IMAGE}
+    container_name: grafana
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    environment:
+      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
+    volumes:
+      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_SERVICE_PORT}"
+    logging: *logging
+
+  # OpenTelemetry Collector
+  otelcol:
+    extends: base
+    image: ${COLLECTOR_CONTRIB_IMAGE}
+    container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 125M
+    restart: unless-stopped
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    volumes:
+      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
+    ports:
+      - ${OTEL_COLLECTOR_PORT_GRPC}
+      - ${OTEL_COLLECTOR_PORT_HTTP}
+    depends_on:
+      - jaeger
+    logging: *logging
+    environment:
+      - ENVOY_PORT
+
+  # Prometheus
+  prometheus:
+    extends: base
+    image: ${PROMETHEUS_IMAGE}
+    container_name: prometheus
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+      - --enable-feature=exemplar-storage
+      - --enable-feature=otlp-write-receiver
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    ports:
+      - ${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}
+    logging: *logging
+
+  # OpenSearch
+  opensearch:
+    extends: base
+    image: ${OPENSEARCH_IMAGE}
+    container_name: opensearch
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    environment:
+      - cluster.name=demo-cluster
+      - node.name=demo-node
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200"
+    logging: *logging
