@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sregpt
+spec:
+  destination:
+    name: default
+    namespace: argocd
+  source:
+    path: infra/app-of-apps/app
+    repoURL: https://github.com/edhenry/sregpt.git
+    targetRevision: HEAD
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
