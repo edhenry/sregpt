@@ -2,5 +2,5 @@ spec:
   destination:
     server: https://kubernetes.default.svc
   source:
-    repoURL: https://github.com/edhenry/sregpt
+    repoURL: https://github.com/edhenry/sregpt/infrastructure/app-of-apps/
     targetRevision: edhenry/platform-base
