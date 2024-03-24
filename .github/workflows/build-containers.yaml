@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  IMAGE_REPOSITORY: edhenry/sregpt
+  IMAGE_TAG: v0.1.0
+
 jobs:
 
   build:
@@ -21,5 +25,9 @@ jobs:
       run: |
 
         echo "$NGC_OAUTH_TOKEN" | docker login nvcr.io --username \$oauthtoken --password-stdin 
+        DOCKER_BUILDKIT=0 docker build . --file ./backend/Dockerfile --tag "$IMAGE_REPOSITORY":"$IMAGE_TAG"
+        docker push "$IMAGE_REPOSITORY":"$IMAGE_TAG"
 
-        DOCKER_BUILDKIT=0 docker build . --file ./backend/Dockerfile --tag edhenry/sregpt:$(date +%s)
+        # Clean artifacts from whatever worker we're using...
+        docker rmi "$IMAGE_REPOSITORY":"$IMAGE_TAG"
+        docker buildx purge -f
