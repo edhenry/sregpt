@@ -7,7 +7,7 @@ spec:
     name: default
     namespace: argocd
   source:
-    path: infra/app-of-apps/app
+    path: infrastructure/app-of-apps/app
     repoURL: https://github.com/edhenry/sregpt.git
     targetRevision: HEAD
   project: default
