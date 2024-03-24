@@ -22,4 +22,4 @@ jobs:
 
         echo "$NGC_OAUTH_TOKEN" | docker login nvcr.io --username \$oauthtoken --password-stdin 
 
-        docker build . --file ./backend/Dockerfile --tag edhenry/sregpt:$(date +%s)
+        DOCKER_BUILDKIT=0 docker build . --file ./backend/Dockerfile --tag edhenry/sregpt:$(date +%s)
