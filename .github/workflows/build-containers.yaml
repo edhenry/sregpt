@@ -34,5 +34,5 @@ jobs:
         docker push edhenry/sregpt:"$IMAGE_TAG"
 
         # Clean artifacts from whatever worker we're using...
-        docker rmi "$IMAGE_REPOSITORY":"$IMAGE_TAG"
-        docker buildx purge -f
+        # docker rmi "$IMAGE_REPOSITORY":"$IMAGE_TAG"
+        docker buildx prune -f
