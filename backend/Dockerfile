@@ -1,5 +1,5 @@
 FROM nvcr.io/nvidia/pytorch:24.02-py3
 
-COPY ./ /
+COPY ./ /workspace/hippocamp
 
-CMD ["python", "main.py"]
+CMD ["python", "/workspace/hippocamp/main.py"]
