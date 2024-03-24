@@ -17,7 +17,7 @@ jobs:
     - name: Build the Docker image
       env: 
         # NGC Auth Token
-        NGC_AUTH_TOKEN: ${{ secrets.NGC_OAUTH_TOKEN }}
+        NGC_OAUTH_TOKEN: ${{ secrets.NGC_OAUTH_TOKEN }}
       run: |
 
         echo "$NGC_OAUTH_TOKEN" | docker login nvcr.io --username \$oauthtoken --password-stdin 
