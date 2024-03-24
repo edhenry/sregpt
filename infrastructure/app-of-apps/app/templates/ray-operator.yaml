@@ -3,9 +3,8 @@ kind: Application
 metadata:
   name: ray-operator
 spec:
+  project: default
   source:
-    # repoURL: https://github.com/ray-project/kuberay
-    # targetRevision: v1.0.0-rc.0
     repoURL: {{ .Values.spec.source.repoURL }}
     targetRevision: {{ .Values.spec.source.targetRevision }}
     path: helm-chart/kuberay-operator
