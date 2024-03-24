@@ -30,8 +30,8 @@ jobs:
         echo "$NGC_OAUTH_TOKEN" | docker login nvcr.io --username \$oauthtoken --password-stdin 
         DOCKER_BUILDKIT=0 docker build . --file ./backend/Dockerfile --tag "$IMAGE_REPOSITORY":"$IMAGE_TAG"
 
-        docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
-        docker push "$IMAGE_REPOSITORY":"$IMAGE_TAG"
+        echo $"$DOCKERHUB_TOKEN" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+        docker push edhenry/sregpt:"$IMAGE_TAG"
 
         # Clean artifacts from whatever worker we're using...
         docker rmi "$IMAGE_REPOSITORY":"$IMAGE_TAG"
