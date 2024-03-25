@@ -13,7 +13,7 @@ spec:
       skipCrds: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: ray-operator
+    namespace: sregpt
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
