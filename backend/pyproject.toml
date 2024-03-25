@@ -1,27 +1,29 @@
 [tool]
 [tool.poetry]
-name = "app"
+name = "hippocamp"
 version = "0.1.0"
 description = ""
-authors = [ "Marcus Schiesser <mail@marcusschiesser.de>" ]
+authors = [ "Ed Henry <edhenry@protonmail.com>" ]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11,<3.12"
+python = "^3.10,<3.12"
 fastapi = "^0.104.1"
-pypdf = "^3.17.0"
 python-dotenv = "^1.0.1"
-#docx2txt = "^0.8"
 torch = "^2.2.0"
 openinference-instrumentation-llama-index = "^0.1.2"
+gunicorn = "^21.2.0"
+llama-index-core = "^0.10.23.post1"
+llama-index-llms-openai = "^0.1.12"
+llama-index-embeddings-huggingface = "^0.1.4"
+llama-index = "^0.10.23"
 
 [tool.poetry.dependencies.uvicorn]
 extras = [ "standard" ]
 version = "^0.23.2"
 
-[tool.poetry.dependencies.llama-index]
-version = "^0.9.19"
-extras = [ "postgres" ]
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
 
 [build-system]
 requires = [ "poetry-core" ]
