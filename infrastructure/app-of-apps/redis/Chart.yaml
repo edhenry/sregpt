@@ -25,4 +25,4 @@ appVersion: "1.0"
 dependencies:
 - name: redis
   version: 7.2.4
-  repository: registry-1.docker.io/bitnamicharts/redis
+  repository: oci://registry-1.docker.io/bitnamicharts/redis
