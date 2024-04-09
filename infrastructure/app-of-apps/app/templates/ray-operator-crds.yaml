@@ -11,6 +11,7 @@ spec:
     path: infrastructure/app-of-apps/ray-operator-crds
   destination:
     server: https://kubernetes.default.svc
+    namespace: sregpt
   syncPolicy:
     syncOptions:
     - Replace=true
