@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: {{ .Values.spec.source.repoURL }}
     targetRevision: {{ .Values.spec.source.targetRevision }}
-    path: infrastructure/app-of-apps/ray-operator-crds
+    path: infrastructure/app-of-apps/ray-operator-crds/crds
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
