@@ -1,6 +1,6 @@
 apiVersion: v2
-name: ray-operator
-description: A helm chart for deploying the Ray distributed computational framework
+name: postgres
+description: A helm chart for deploying the Postgresql database
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -25,4 +25,4 @@ appVersion: "1.0"
 dependencies:
   - name: postgresql
     version: 15.5.1
-    repository: oci://registry-1.docker.io/bitnamicharts
+    repository: oci://registry-1.docker.io/bitnamicharts/
