@@ -1,7 +1,7 @@
 import os
-from llama_index.vector_stores import PGVectorStore
+from llama_index.legacy.vector_stores.postgres import PGVectorStore
 from urllib.parse import urlparse
-from app.engine.constants import PGVECTOR_SCHEMA, PGVECTOR_TABLE
+from hippocamp.config.env import VECTORDB_SCHEMA, VECTORDB_TABLE
 
 
 def init_pg_vector_store_from_env():
@@ -22,6 +22,6 @@ def init_pg_vector_store_from_env():
     return PGVectorStore(
         connection_string=conn_string,
         async_connection_string=async_conn_string,
-        schema_name=PGVECTOR_SCHEMA,
-        table_name=PGVECTOR_TABLE,
+        schema_name=VECTORDB_SCHEMA,
+        table_name=VECTORDB_TABLE,
     )
