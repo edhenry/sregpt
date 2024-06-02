@@ -23,6 +23,6 @@ version: 0.1.0
 appVersion: "1.0"
 
 dependencies:
-- name: redis
-  version: 7.2.4
-  repository: oci://registry-1.docker.io/bitnamicharts/redis
+  - name: redis
+    version: 19.5.0
+    repository: oci://registry-1.docker.io/bitnamicharts
