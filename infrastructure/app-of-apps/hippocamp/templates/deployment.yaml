@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hippocamp
+  labels:
+    app: hippocamp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hippocamp
+  template:
+    metadata:
+      labels:
+        app: hippocamp
+    spec:
+      containers:
+      - name: hippocamp
+        image: hippocamp:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-ai-apikey
+              key: openai-api-key
+        - name: EMBEDDING_MODEL
+          value: {{ .Values.models.embedding-model }}
+        - name: LLM_MODEL
+          value: {{ .Values.models.llm }}
+        - name: CHUNK_SIZE
+          value: {{ .Values.rag.chunk-size }}
+        - name: CHUNK_OVERLAP
+          value: {{ .Values.rag.chunk-overlap }}
+        - name: CONTEXT_WINDOW
+          value: {{ .Values.rag.context-window }}
+        - name: NUM_OUTPUT
+          value: {{ .Values.rag.num-output }}
+        volumeMounts:
+        - name: hippocamp-storage
+          mountPath: /data
+      volumes:
+      - name: hippocamp-storage
+        persistentVolumeClaim:
+          claimName: hippocamp-pvc

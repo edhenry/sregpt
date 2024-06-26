@@ -1,0 +1,15 @@
+service: 
+  port: 8000
+
+models:
+  embedding-model: all-mpnet-base-v2
+  llm: llama-3-8b-instruct
+
+rag:
+  chunk-size: 1024
+  chunk-overlap: 20
+  context-window: 3900
+  num-output: 512
+
+storage:
+  size: 10Gi
