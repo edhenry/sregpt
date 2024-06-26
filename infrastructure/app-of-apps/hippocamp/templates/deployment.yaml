@@ -18,7 +18,7 @@ spec:
       - name: hippocamp
         image: hippocamp:latest
         ports:
-        - containerPort: 8000
+        - containerPort: {{ .Values.service.port }}
         env:
         - name: OPENAI_API_KEY
           valueFrom:
@@ -30,13 +30,13 @@ spec:
         - name: LLM_MODEL
           value: {{ .Values.models.llm }}
         - name: CHUNK_SIZE
-          value: {{ index .Values.rag.chunk_size }}
+          value: "{{ index .Values.rag.chunk_size }}"
         - name: CHUNK_OVERLAP
-          value: {{ .Values.rag.chunk_overlap }}
+          value: "{{ .Values.rag.chunk_overlap }}"
         - name: CONTEXT_WINDOW
-          value: {{ .Values.rag.context_window }}
+          value: "{{ .Values.rag.context_window }}"
         - name: NUM_OUTPUT
-          value: {{ .Values.rag.num_output }}
+          value: "{{ .Values.rag.num_output }}"
         volumeMounts:
         - name: hippocamp-storage
           mountPath: /data
