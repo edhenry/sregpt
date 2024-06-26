@@ -32,7 +32,7 @@ spec:
         - name: CHUNK_SIZE
           value: {{ index .Values.rag.chunk_size }}
         - name: CHUNK_OVERLAP
-          value: {{ .Values.rag.chunk-overlap }}
+          value: {{ .Values.rag.chunk_overlap }}
         - name: CONTEXT_WINDOW
           value: {{ .Values.rag.context_window }}
         - name: NUM_OUTPUT
