@@ -26,17 +26,17 @@ spec:
               name: open-ai-apikey
               key: openai-api-key
         - name: EMBEDDING_MODEL
-          value: {{ .Values.models.embedding-model }}
+          value: {{ .Values.models.embedding_model }}
         - name: LLM_MODEL
           value: {{ .Values.models.llm }}
         - name: CHUNK_SIZE
-          value: {{ .Values.rag.chunk-size }}
+          value: {{ index .Values.rag.chunk_size }}
         - name: CHUNK_OVERLAP
           value: {{ .Values.rag.chunk-overlap }}
         - name: CONTEXT_WINDOW
-          value: {{ .Values.rag.context-window }}
+          value: {{ .Values.rag.context_window }}
         - name: NUM_OUTPUT
-          value: {{ .Values.rag.num-output }}
+          value: {{ .Values.rag.num_output }}
         volumeMounts:
         - name: hippocamp-storage
           mountPath: /data
