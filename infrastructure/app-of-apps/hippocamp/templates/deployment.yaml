@@ -23,7 +23,7 @@ spec:
         - name: OPENAI_API_KEY
           valueFrom:
             secretKeyRef:
-              name: open-ai-apikey
+              name: openai-api-key
               key: openai-api-key
         - name: EMBEDDING_MODEL
           value: {{ .Values.models.embedding_model }}
