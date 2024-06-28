@@ -104,4 +104,4 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY ./ /hippocamp/
 WORKDIR /hippocamp
 
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:hippocamp"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app"]
