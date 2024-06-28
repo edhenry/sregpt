@@ -7,6 +7,6 @@ spec:
     app: hippocamp
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: {{ .Values.service.port }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
   type: LoadBalancer
