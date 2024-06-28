@@ -1,17 +1,12 @@
-import sys
-
-print(f"Python version: {sys.version}")
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
 import logging
 import os
 import uvicorn
 from hippocamp.api.routers.chat import chat_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -33,4 +28,4 @@ app.include_router(chat_router, prefix="/api/chat")
 
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:hippocamp", host="0.0.0.0", reload=True)
+    uvicorn.run(app="main:app", host="0.0.0.0", reload=True)

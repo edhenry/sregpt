@@ -8,6 +8,22 @@ load_dotenv(dotenv_path)
 # External API keys
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
+# Model Definitions
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL")
+LLM = os.environ.get("LLM")
+
+# LlamaIndex Configuration
+CHUNK_SIZE = os.environ.get("CHUNK_SIZE")
+CHUNK_OVERLAP = os.environ.get("CHUNK_OVERLAP")
+CONTEXT_WINDOW = os.environ.get("CONTEXT_WINDOW")
+NUM_OUTPUT = os.environ.get("NUM_OUTPUT")
+VECTORDB_SCHEMA = os.environ.get("VECTORDB_SCHEMA")
+VECTORDB_TABLE = os.environ.get("VECTORDB_TABLE")
+
+# Data Settings
+DATA_DIR = os.environ.get("DATA_DIR")
+
+
 # Redis configuration
 REDIS_HOST = os.environ.get("REDIS_HOST")
 REDIS_PORT = os.environ.get("REDIS_PORT")
@@ -30,13 +46,17 @@ OTEL_COLLECTOR_HOST = os.environ.get("OTEL_COLLECTOR_HOST")
 OTEL_COLLECTOR_PORT_GRPC = os.environ.get("OTEL_COLLECTOR_PORT_GRPC")
 OTEL_COLLECTOR_PORT_HTTP = os.environ.get("OTEL_COLLECTOR_PORT_HTTP")
 OTEL_EXPORTER_OTLP_ENDPOINT = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT")
-PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = os.environ.get("PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
+PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = os.environ.get(
+    "PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"
+)
 
 # OpenTelemetry Resource Definitions
 OTEL_RESOURCE_ATTRIBUTES = os.environ.get("OTEL_RESOURCE_ATTRIBUTES")
 
 # Metrics Temporality
-OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE = os.environ.get("OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE")
+OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE = os.environ.get(
+    "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE"
+)
 
 # ********************
 # Telemetry Components

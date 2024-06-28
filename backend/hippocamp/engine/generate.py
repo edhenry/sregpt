@@ -1,12 +1,11 @@
 import logging
 
-from app.engine.constants import DATA_DIR
-from app.engine.context import create_service_context
-from app.engine.utils import init_pg_vector_store_from_env
-from app.engine.loader import get_documents
+from hippocamp.config.env import DATA_DIR
+from hippocamp.engine.settings import settings
+from hippocamp.engine.utils import init_pg_vector_store_from_env
+from hippocamp.engine.loader import get_documents
 
-from llama_index import (
-    SimpleDirectoryReader,
+from llama_index.core import (
     VectorStoreIndex,
     StorageContext,
 )
@@ -33,4 +32,4 @@ def generate_datasource(service_context):
 
 
 if __name__ == "__main__":
-    generate_datasource(create_service_context())
+    generate_datasource(settings())

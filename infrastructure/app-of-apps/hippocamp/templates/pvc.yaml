@@ -1,0 +1,11 @@
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hippocamp-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}

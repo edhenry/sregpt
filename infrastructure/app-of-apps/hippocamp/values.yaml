@@ -1,0 +1,20 @@
+image:
+  repository: edhenry/sregpt
+  tag: v0.1.0
+
+service: 
+  port: 9000
+  targetPort: 8080
+
+models:
+  embedding_model: all-mpnet-base-v2
+  llm: llama-3-8b-instruct
+
+rag:
+  chunk_size: 1024
+  chunk_overlap: 20
+  context_window: 3900
+  num_output: 512
+
+storage:
+  size: 10Gi
